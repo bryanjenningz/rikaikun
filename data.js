@@ -54,7 +54,12 @@ function fileReadArray(name, charset) {
 }
 
 function rcxDict(loadNames) {
-	this.loadDictionary();
+	// Load dictionary files. These are mostly flat text files; loaded as one continous string to reduce memory use.
+	this.wordDict = fileRead(chrome.extension.getURL("data/dict.dat"));
+	this.wordIndex = fileRead(chrome.extension.getURL("data/dict.idx"));
+	this.kanjiData = fileRead(chrome.extension.getURL("data/kanji.dat"), 'UTF-8');
+	this.radData = fileReadArray(chrome.extension.getURL("data/radicals.dat"), 'UTF-8');
+
 	if (loadNames) this.loadNames();
 	this.loadDIF();
 }
@@ -96,17 +101,6 @@ rcxDict.prototype = {
 		this.nameIndex = fileRead(chrome.extension.getURL("data/names.idx"));
 	},
 
-	//	Note: These are mostly flat text files; loaded as one continous string to reduce memory use
-	loadDictionary: function() {
-		/* this.wordDict = fileRead(rcxWordDict.datURI, rcxWordDict.datCharset);
-		this.wordIndex = fileRead(rcxWordDict.idxURI, rcxWordDict.idxCharset); */
-		this.wordDict = fileRead(chrome.extension.getURL("data/dict.dat"));
-		this.wordIndex = fileRead(chrome.extension.getURL("data/dict.idx"));
-		this.kanjiData = fileRead(chrome.extension.getURL("data/kanji.dat"), 'UTF-8');
-		this.radData = fileReadArray(chrome.extension.getURL("data/radicals.dat"), 'UTF-8'); 
-
-		//	this.test_kanji();
-	},
 /*
 	test_kanji: function() {
 		var a = this.kanjiData.split('\n');
