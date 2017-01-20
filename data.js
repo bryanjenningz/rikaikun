@@ -39,6 +39,11 @@
 
 */
 
+var dicts = {
+	nameDict: null,
+	nameIndex: null,
+};
+
 function fileRead(url, charset) {
 	var req = new XMLHttpRequest();
 	req.open("GET", url, false);
@@ -53,14 +58,20 @@ function fileReadArray(name, charset) {
 	return a;
 }
 
-function rcxDict(loadNames) {
+function loadNames() {
+	if ((dicts.nameDict) && (dicts.nameIndex)) return;
+	dicts.nameDict = fileRead(chrome.extension.getURL("data/names.dat"));
+	dicts.nameIndex = fileRead(chrome.extension.getURL("data/names.idx"));
+}
+
+function rcxDict(loadNamesDict) {
 	// Load dictionary files. These are mostly flat text files; loaded as one continous string to reduce memory use.
 	this.wordDict = fileRead(chrome.extension.getURL("data/dict.dat"));
 	this.wordIndex = fileRead(chrome.extension.getURL("data/dict.idx"));
 	this.kanjiData = fileRead(chrome.extension.getURL("data/kanji.dat"), 'UTF-8');
 	this.radData = fileReadArray(chrome.extension.getURL("data/radicals.dat"), 'UTF-8');
 
-	if (loadNames) this.loadNames();
+	if (loadNamesDict) loadNames();
 	this.loadDIF();
 }
 
@@ -89,16 +100,6 @@ rcxDict.prototype = {
 					else return data.substring(i, data.indexOf('\n', mi + 1));
 		}
 		return null;
-	},
-
-	//
-
-	loadNames: function() {
-		if ((this.nameDict) && (this.nameIndex)) return;
-		/*this.nameDict = fileRead(rcxNamesDict.datURI, rcxNamesDict.datCharset);
-		this.nameIndex = fileRead(rcxNamesDict.idxURI, rcxNamesDict.idxCharset);*/
-		this.nameDict = fileRead(chrome.extension.getURL("data/names.dat"));
-		this.nameIndex = fileRead(chrome.extension.getURL("data/names.idx"));
 	},
 
 /*
@@ -351,9 +352,9 @@ if (0) {
 		if (doNames) {
 			// check: split this
 
-			this.loadNames();
-			dict = this.nameDict;
-			index = this.nameIndex;
+			loadNames();
+			dict = dicts.nameDict;
+			index = dicts.nameIndex;
 			maxTrim = 20;//this.config.namax;
 			entry.names = 1;
 			console.log('doNames');
@@ -521,8 +522,8 @@ if (0) {
 		if (doNames) {
 			e.names = 1;
 			max = 20;//this.config.namax;
-			this.loadNames();
-			d = this.nameDict;
+			loadNames();
+			d = dicts.nameDict;
 		}
 		else {
 			e.names = 0;
