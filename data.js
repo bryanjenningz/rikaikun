@@ -46,6 +46,12 @@ function fileRead(url, charset) {
 	return req.responseText;
 }
 
+function fileReadArray(name, charset) {
+	var a = fileRead(name, charset).split('\n');
+	// Remove empty entries at the end of the array
+	while ((a.length > 0) && (a[a.length - 1].length == 0)) a.pop();
+	return a;
+}
 
 function rcxDict(loadNames) {
 	this.loadDictionary();
@@ -58,14 +64,6 @@ rcxDict.prototype = {
 
 	setConfig: function(c) {
 		this.config = c;
-	},
-
-	fileReadArray: function(name, charset) {
-		var a = fileRead(name, charset).split('\n');
-		// Is this just in case there is blank shit in the file.  It was writtin by Jon though.
-		// I suppose this is more robust
-		while ((a.length > 0) && (a[a.length - 1].length == 0)) a.pop();
-		return a;
 	},
 
 	find: function(data, text) {
@@ -105,7 +103,7 @@ rcxDict.prototype = {
 		this.wordDict = fileRead(chrome.extension.getURL("data/dict.dat"));
 		this.wordIndex = fileRead(chrome.extension.getURL("data/dict.idx"));
 		this.kanjiData = fileRead(chrome.extension.getURL("data/kanji.dat"), 'UTF-8');
-		this.radData = this.fileReadArray(chrome.extension.getURL("data/radicals.dat"), 'UTF-8'); 
+		this.radData = fileReadArray(chrome.extension.getURL("data/radicals.dat"), 'UTF-8'); 
 
 		//	this.test_kanji();
 	},
@@ -197,7 +195,7 @@ if (0) {
 		this.difRules = [];
 		this.difExact = [];
 
-		var buffer = this.fileReadArray(chrome.extension.getURL("data/deinflect.dat"), 'UTF-8');
+		var buffer = fileReadArray(chrome.extension.getURL("data/deinflect.dat"), 'UTF-8');
 		var prevLen = -1;
 		var g, o;
 
