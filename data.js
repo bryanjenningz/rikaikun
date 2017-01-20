@@ -76,7 +76,40 @@ function rcxDict(loadNamesDict) {
 	dicts.radData = fileReadArray(chrome.extension.getURL("data/radicals.dat"), 'UTF-8');
 
 	if (loadNamesDict) loadNames();
-	this.loadDIF();
+
+	// Load dif
+	{
+		this.difReasons = [];
+		this.difRules = [];
+		this.difExact = [];
+
+		var buffer = fileReadArray(chrome.extension.getURL("data/deinflect.dat"), 'UTF-8');
+		var prevLen = -1;
+		var g, o;
+
+		// i = 1: skip header
+		for (var i = 1; i < buffer.length; ++i) {
+			var f = buffer[i].split('\t');
+
+			if (f.length === 1) {
+				this.difReasons.push(f[0]);
+			} else if (f.length === 4) {
+				o = {};
+				o.from = f[0];
+				o.to = f[1];
+				o.type = f[2];
+				o.reason = f[3];
+
+				if (prevLen !== o.from.length) {
+					prevLen = o.from.length;
+					g = [];
+					g.flen = prevLen;
+					this.difRules.push(g);
+				}
+				g.push(o);
+			}
+		}
+	}
 }
 
 rcxDict.prototype = {
@@ -187,41 +220,6 @@ if (0) {
 	},
 
 */
-	///
-
-	loadDIF: function() {
-		this.difReasons = [];
-		this.difRules = [];
-		this.difExact = [];
-
-		var buffer = fileReadArray(chrome.extension.getURL("data/deinflect.dat"), 'UTF-8');
-		var prevLen = -1;
-		var g, o;
-
-		// i = 1: skip header
-		for (var i = 1; i < buffer.length; ++i) {
-			var f = buffer[i].split('\t');
-
-			if (f.length == 1) {
-				this.difReasons.push(f[0]);
-			}
-			else if (f.length == 4) {
-				o = {};
-				o.from = f[0];
-				o.to = f[1];
-				o.type = f[2];
-				o.reason = f[3];
-
-				if (prevLen != o.from.length) {
-					prevLen = o.from.length;
-					g = [];
-					g.flen = prevLen;
-					this.difRules.push(g);
-				}
-				g.push(o);
-			}
-		}
-	},
 
 	deinflect: function(word) {
 		var r = [];
