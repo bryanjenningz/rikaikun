@@ -39,6 +39,14 @@
 
 */
 
+function fileRead(url, charset) {
+	var req = new XMLHttpRequest();
+	req.open("GET", url, false);
+	req.send(null);
+	return req.responseText;
+}
+
+
 function rcxDict(loadNames) {
 	this.loadDictionary();
 	if (loadNames) this.loadNames();
@@ -52,17 +60,8 @@ rcxDict.prototype = {
 		this.config = c;
 	},
 
-	//
-
-	fileRead: function(url, charset) {
-		var req = new XMLHttpRequest();
-		req.open("GET", url, false);
-		req.send(null);
-		return req.responseText;
-	},
-
 	fileReadArray: function(name, charset) {
-		var a = this.fileRead(name, charset).split('\n');
+		var a = fileRead(name, charset).split('\n');
 		// Is this just in case there is blank shit in the file.  It was writtin by Jon though.
 		// I suppose this is more robust
 		while ((a.length > 0) && (a[a.length - 1].length == 0)) a.pop();
@@ -93,19 +92,19 @@ rcxDict.prototype = {
 
 	loadNames: function() {
 		if ((this.nameDict) && (this.nameIndex)) return;
-		/*this.nameDict = this.fileRead(rcxNamesDict.datURI, rcxNamesDict.datCharset);
-		this.nameIndex = this.fileRead(rcxNamesDict.idxURI, rcxNamesDict.idxCharset);*/
-		this.nameDict = this.fileRead(chrome.extension.getURL("data/names.dat"));
-		this.nameIndex = this.fileRead(chrome.extension.getURL("data/names.idx"));
+		/*this.nameDict = fileRead(rcxNamesDict.datURI, rcxNamesDict.datCharset);
+		this.nameIndex = fileRead(rcxNamesDict.idxURI, rcxNamesDict.idxCharset);*/
+		this.nameDict = fileRead(chrome.extension.getURL("data/names.dat"));
+		this.nameIndex = fileRead(chrome.extension.getURL("data/names.idx"));
 	},
 
 	//	Note: These are mostly flat text files; loaded as one continous string to reduce memory use
 	loadDictionary: function() {
-		/* this.wordDict = this.fileRead(rcxWordDict.datURI, rcxWordDict.datCharset);
-		this.wordIndex = this.fileRead(rcxWordDict.idxURI, rcxWordDict.idxCharset); */
-		this.wordDict = this.fileRead(chrome.extension.getURL("data/dict.dat"));
-		this.wordIndex = this.fileRead(chrome.extension.getURL("data/dict.idx"));
-		this.kanjiData = this.fileRead(chrome.extension.getURL("data/kanji.dat"), 'UTF-8');
+		/* this.wordDict = fileRead(rcxWordDict.datURI, rcxWordDict.datCharset);
+		this.wordIndex = fileRead(rcxWordDict.idxURI, rcxWordDict.idxCharset); */
+		this.wordDict = fileRead(chrome.extension.getURL("data/dict.dat"));
+		this.wordIndex = fileRead(chrome.extension.getURL("data/dict.idx"));
+		this.kanjiData = fileRead(chrome.extension.getURL("data/kanji.dat"), 'UTF-8');
 		this.radData = this.fileReadArray(chrome.extension.getURL("data/radicals.dat"), 'UTF-8'); 
 
 		//	this.test_kanji();
@@ -128,7 +127,7 @@ rcxDict.prototype = {
 
 /*
 	test_index: function() {
-		var ixF = this.fileRead('chrome://rikaichan/content/dict.idx', 'EUC-JP');
+		var ixF = fileRead('chrome://rikaichan/content/dict.idx', 'EUC-JP');
 		var ixA = ixF.split('\n');
 
 		while ((ixA.length > 0) && (ixA[ixA.length - 1].length == 0)) ixA.pop();
@@ -286,13 +285,18 @@ if (0) {
 
 
 	// katakana -> hiragana conversion tables
-	ch:[0x3092,0x3041,0x3043,0x3045,0x3047,0x3049,0x3083,0x3085,0x3087,0x3063,0x30FC,0x3042,0x3044,0x3046,
+	// を,ぁ,ぃ,ぅ,ぇ,ぉ,ゃ,ゅ,ょ,っ,ー,あ,い,う,え,お,か,き,く,け,こ,さ,し,す,せ,そ,た,ち,つ,て,と,な,に,ぬ,ね,の,は,ひ,ふ,へ,ほ,ま,み,む,め,も,や,ゆ,よ,ら,り,る,れ,ろ,わ,ん
+	ch: [0x3092,0x3041,0x3043,0x3045,0x3047,0x3049,0x3083,0x3085,0x3087,0x3063,0x30FC,0x3042,0x3044,0x3046,
 		0x3048,0x304A,0x304B,0x304D,0x304F,0x3051,0x3053,0x3055,0x3057,0x3059,0x305B,0x305D,0x305F,0x3061,
 		0x3064,0x3066,0x3068,0x306A,0x306B,0x306C,0x306D,0x306E,0x306F,0x3072,0x3075,0x3078,0x307B,0x307E,
 		0x307F,0x3080,0x3081,0x3082,0x3084,0x3086,0x3088,0x3089,0x308A,0x308B,0x308C,0x308D,0x308F,0x3093],
-	cv:[0x30F4,0xFF74,0xFF75,0x304C,0x304E,0x3050,0x3052,0x3054,0x3056,0x3058,0x305A,0x305C,0x305E,0x3060,
+
+	// ヴ,ｴ,ｵ,が,ぎ,ぐ,げ,ご,ざ,じ,ず,ぜ,ぞ,だ,ぢ,づ,で,ど,ﾅ,ﾆ,ﾇ,ﾈ,ﾉ,ば,び,ぶ,べ,ぼ
+	cv: [0x30F4,0xFF74,0xFF75,0x304C,0x304E,0x3050,0x3052,0x3054,0x3056,0x3058,0x305A,0x305C,0x305E,0x3060,
 		0x3062,0x3065,0x3067,0x3069,0xFF85,0xFF86,0xFF87,0xFF88,0xFF89,0x3070,0x3073,0x3076,0x3079,0x307C],
-	cs:[0x3071,0x3074,0x3077,0x307A,0x307D],
+
+	// ぱ,ぴ,ぷ,ぺ,ぽ
+	cs: [0x3071,0x3074,0x3077,0x307A,0x307D],
 
 	wordSearch: function(word, doNames, max) {
 		var i, u, v, r, p;

@@ -5,8 +5,11 @@
 	"version": "0.8.92",
 	
 	"description": "A port of rikaichan for chrome. Translate Japanese by hovering over words.",
-	"icons": { "48": "images/icon48.png",
-				"128": "images/icon128.png"},
+	
+	"icons": {
+		"48": "images/icon48.png",
+		"128": "images/icon128.png"
+	},
 	
 	"permissions": [
 		"tabs",
@@ -28,7 +31,7 @@
 		{
 			"matches": ["http://*/*", "https://*/*", "ftp://*/*", "file:///*"],
 			"js": ["rikaicontent.js"],
-			"all_frames":true
+			"all_frames": true
 		}
 	],
 
