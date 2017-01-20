@@ -48,6 +48,11 @@ var dicts = {
 	nameIndex: null,
 };
 
+var difs = {
+	difReasons: [],
+	difRules: [],
+};
+
 function fileRead(url, charset) {
 	var req = new XMLHttpRequest();
 	req.open("GET", url, false);
@@ -69,7 +74,7 @@ function loadNames() {
 }
 
 function rcxDict(loadNamesDict) {
-	// Load dictionary files. These are mostly flat text files; loaded as one continous string to reduce memory use.
+	// Load dictionary files. These are mostly flat text files; loaded as one continuous string to reduce memory use.
 	dicts.wordDict = fileRead(chrome.extension.getURL("data/dict.dat"));
 	dicts.wordIndex = fileRead(chrome.extension.getURL("data/dict.idx"));
 	dicts.kanjiData = fileRead(chrome.extension.getURL("data/kanji.dat"), 'UTF-8');
@@ -77,11 +82,11 @@ function rcxDict(loadNamesDict) {
 
 	if (loadNamesDict) loadNames();
 
-	// Load dif
+	// Load deinflection data
 	{
-		this.difReasons = [];
-		this.difRules = [];
-		this.difExact = [];
+		console.log('loading deinflection data');
+		difs.difReasons = [];
+		difs.difRules = [];
 
 		var buffer = fileReadArray(chrome.extension.getURL("data/deinflect.dat"), 'UTF-8');
 		var prevLen = -1;
@@ -92,7 +97,7 @@ function rcxDict(loadNamesDict) {
 			var f = buffer[i].split('\t');
 
 			if (f.length === 1) {
-				this.difReasons.push(f[0]);
+				difs.difReasons.push(f[0]);
 			} else if (f.length === 4) {
 				o = {};
 				o.from = f[0];
@@ -104,7 +109,7 @@ function rcxDict(loadNamesDict) {
 					prevLen = o.from.length;
 					g = [];
 					g.flen = prevLen;
-					this.difRules.push(g);
+					difs.difRules.push(g);
 				}
 				g.push(o);
 			}
@@ -242,8 +247,8 @@ if (0) {
 			var wordLen = word.length;
 			var type = r[i].type;
 
-			for (j = 0; j < this.difRules.length; ++j) {
-				var g = this.difRules[j];
+			for (j = 0; j < difs.difRules.length; ++j) {
+				var g = difs.difRules[j];
 				if (g.flen <= wordLen) {
 					var end = word.substr(-g.flen);
 					for (k = 0; k < g.length; ++k) {
@@ -256,13 +261,13 @@ if (0) {
 								o = r[have[newWord]];
 								o.type |= (rule.type >> 8);
 
-								//o.reason += ' / ' + r[i].reason + ' ' + this.difReasons[rule.reason];
+								//o.reason += ' / ' + r[i].reason + ' ' + difs.difReasons[rule.reason];
 								//o.debug += ' @ ' + rule.debug;
 								continue;
 							}
 							have[newWord] = r.length;
-							if (r[i].reason.length) o.reason = this.difReasons[rule.reason] + ' &lt; ' + r[i].reason;
-								else o.reason = this.difReasons[rule.reason];
+							if (r[i].reason.length) o.reason = difs.difReasons[rule.reason] + ' &lt; ' + r[i].reason;
+								else o.reason = difs.difReasons[rule.reason];
 							o.type = rule.type >> 8;
 							o.word = newWord;
 							//o.debug = r[i].debug + ' $ ' + rule.debug;
