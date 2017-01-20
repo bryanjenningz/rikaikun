@@ -40,6 +40,10 @@
 */
 
 var dicts = {
+	wordDict: null,
+	wordIndex: null,
+	kanjiData: null,
+	radData: null,
 	nameDict: null,
 	nameIndex: null,
 };
@@ -66,10 +70,10 @@ function loadNames() {
 
 function rcxDict(loadNamesDict) {
 	// Load dictionary files. These are mostly flat text files; loaded as one continous string to reduce memory use.
-	this.wordDict = fileRead(chrome.extension.getURL("data/dict.dat"));
-	this.wordIndex = fileRead(chrome.extension.getURL("data/dict.idx"));
-	this.kanjiData = fileRead(chrome.extension.getURL("data/kanji.dat"), 'UTF-8');
-	this.radData = fileReadArray(chrome.extension.getURL("data/radicals.dat"), 'UTF-8');
+	dicts.wordDict = fileRead(chrome.extension.getURL("data/dict.dat"));
+	dicts.wordIndex = fileRead(chrome.extension.getURL("data/dict.idx"));
+	dicts.kanjiData = fileRead(chrome.extension.getURL("data/kanji.dat"), 'UTF-8');
+	dicts.radData = fileReadArray(chrome.extension.getURL("data/radicals.dat"), 'UTF-8');
 
 	if (loadNamesDict) loadNames();
 	this.loadDIF();
@@ -104,7 +108,7 @@ rcxDict.prototype = {
 
 /*
 	test_kanji: function() {
-		var a = this.kanjiData.split('\n');
+		var a = dicts.kanjiData.split('\n');
 
 		alert('begin test. a.length=' + a.length);
 		var start = (new Date()).getTime();
@@ -360,8 +364,8 @@ if (0) {
 			console.log('doNames');
 		}
 		else {
-			dict = this.wordDict;
-			index = this.wordIndex;
+			dict = dicts.wordDict;
+			index = dicts.wordIndex;
 			maxTrim = 7;//this.config.wmax;
 		}
 
@@ -528,7 +532,7 @@ if (0) {
 		else {
 			e.names = 0;
 			max = 7;//this.config.wmax;
-			d = this.wordDict;
+			d = dicts.wordDict;
 		}
 
 		r = new RegExp(text, 'igm');
@@ -555,7 +559,7 @@ if (0) {
 		i = kanji.charCodeAt(0);
 		if (i < 0x3000) return null;
 
-		kde = this.find(this.kanjiData, kanji);
+		kde = this.find(dicts.kanjiData, kanji);
 		if (!kde) return null;
 
 		a = kde.split('|');
@@ -648,21 +652,21 @@ if (0) {
 				break;
 			}
 			box = '<table class="k-abox-tb"><tr>' +
-				'<td class="k-abox-r">radical<br/>' + this.radData[bn].charAt(0) + ' ' + (bn + 1) + '</td>' +
+				'<td class="k-abox-r">radical<br/>' + dicts.radData[bn].charAt(0) + ' ' + (bn + 1) + '</td>' +
 				'<td class="k-abox-g">' + k + '</td>' +
 				'</tr><tr>' +
 				'<td class="k-abox-f">freq<br/>' + (entry.misc['F'] ? entry.misc['F'] : '-') + '</td>' +
 				'<td class="k-abox-s">strokes<br/>' + entry.misc['S'] + '</td>' +
 				'</tr></table>';
 			if (rcxMain.config.kanjicomponents == 'true') {
-				k = this.radData[bn].split('\t');
+				k = dicts.radData[bn].split('\t');
 				box += '<table class="k-bbox-tb">' +
 						'<tr><td class="k-bbox-1a">' + k[0] + '</td>' +
 						'<td class="k-bbox-1b">' + k[2] + '</td>' +
 						'<td class="k-bbox-1b">' + k[3] + '</td></tr>';
 				j = 1;
-				for (i = 0; i < this.radData.length; ++i) {
-					s = this.radData[i];
+				for (i = 0; i < dicts.radData.length; ++i) {
+					s = dicts.radData[i];
 					if ((bn != i) && (s.indexOf(entry.kanji) != -1)) {
 						k = s.split('\t');
 						c = ' class="k-bbox-' + (j ^= 1);
