@@ -511,7 +511,6 @@ rcxDict.prototype = {
     'U',  'Unicode'
   ],
 
-
   makeHtml: function(entry) {
     var e;
     var b;
