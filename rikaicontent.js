@@ -764,27 +764,10 @@ var rcxContent = {
 		
 		chrome.extension.sendMessage({"type":"makehtml", "entry":e}, rcxContent.processHtml);
 	},
-/*
-	inRange: function (event) {
-		var selection = event.view.getSelection();
-		if ((selection.rangeCount === 0) || (!event.rangeParent)) return false;
-		var newRange = event.view.document.createRange();
-		newRange.setStart(event.rangeParent, event.rangeOffset);
-		newRange.setEnd(event.rangeParent, event.rangeOffset);
-
-		var curRange = selection.getRangeAt(0);
-		if (newRange.compareBoundaryPoints(Range.START_TO_START, curRange) > -1 &&
-			newRange.compareBoundaryPoints(Range.END_TO_END, curRange) < 0)
-			return true;
-		else return false;
-	},
-	
-*/
 
 	getFirstTextChild: function(node) {
 		return document.evaluate('descendant::text()[not(parent::rp) and not(ancestor::rt)]',
 							node, null, XPathResult.ANY_TYPE, null).iterateNext();
-			//
 	},
 	
 	makeFake: function(real) {
@@ -863,11 +846,6 @@ var rcxContent = {
 				fake.style.display = "none";
 				ro = this.getTotalOffset(rp.parentNode, rp, ro);
 			}
-			
-	/*   		console.log( "offset: " + ro + " parentContainer: " +  rp.nodeName + 
-				" total size: " + (rp.data?rp.data.length:"") + " target: " + ev.target.nodeName + 
-				" parentparent: " + rp.parentNode.nodeName); */
-			
 			
 			// This is to account for bugs in caretRangeFromPoint
 			// It includes the fact that it returns text nodes over non text nodes

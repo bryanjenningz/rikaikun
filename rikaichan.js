@@ -51,13 +51,11 @@ var consts = {
 };
 
 var vars = {
+  enabled: 0,
   showMode: 0,
 };
 
 var rcxMain = {
-  altView: 0,
-  enabled: 0,
-
   loadDictionary: function() {
     if (!this.dict) {
       try {
@@ -73,12 +71,12 @@ var rcxMain = {
   onTabSelect: function(tabId) { rcxMain._onTabSelect(tabId); },
   _onTabSelect: function(tabId) {
 
-    if (this.enabled === 1)
+    if (vars.enabled === 1)
       chrome.tabs.sendMessage(tabId, {type: "enable", config: rcxMain.config});
   },
 
   savePrep: function(clip, entry) {
-    var me, mk;
+    var me;
     var text;
     var i;
     var f;
@@ -91,14 +89,10 @@ var rcxMain = {
       me = rcxMain.config.maxClipCopyEntries;
     }
 
-
-    if (!this.fromLB) mk = 1;
-
     text = '';
     for (i = 0; i < f.length; ++i) {
       e = f[i];
       if (e.kanji) {
-        //if (mk-- <= 0) continue
         text += this.dict.makeText(e, 1);
       }
       else {
@@ -157,7 +151,7 @@ var rcxMain = {
     
     // Send message to current tab to add listeners and create stuff
     chrome.tabs.sendMessage(tab.id, {"type": "enable", "config": rcxMain.config});
-    this.enabled = 1;
+    vars.enabled = 1;
     
     if (mode === 1) {
       if (rcxMain.config.minihelp == 'true')
@@ -174,7 +168,7 @@ var rcxMain = {
     // Delete dictionary object after we implement it
     delete this.dict;
     
-    this.enabled = 0;
+    vars.enabled = 0;
     chrome.browserAction.setBadgeBackgroundColor({"color": [0,0,0,0]});
     chrome.browserAction.setBadgeText({"text": ""});
 
@@ -193,7 +187,7 @@ var rcxMain = {
   },
 
   inlineToggle: function(tab) {
-    if (rcxMain.enabled) rcxMain.inlineDisable(tab, 1);
+    if (vars.enabled) rcxMain.inlineDisable(tab, 1);
     else rcxMain.inlineEnable(tab, 1);
   },
   
