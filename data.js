@@ -67,20 +67,14 @@ function fileReadArray(name, charset) {
   return a;
 }
 
-function loadNames() {
-  if ((dicts.nameDict) && (dicts.nameIndex)) return;
-  dicts.nameDict = fileRead(chrome.extension.getURL("data/names.dat"));
-  dicts.nameIndex = fileRead(chrome.extension.getURL("data/names.idx"));
-}
-
-function rcxDict(loadNamesDict) {
+function rcxDict() {
   // Load dictionary files. These are mostly flat text files; loaded as one continuous string to reduce memory use.
   dicts.wordDict = fileRead(chrome.extension.getURL("data/dict.dat"));
   dicts.wordIndex = fileRead(chrome.extension.getURL("data/dict.idx"));
   dicts.kanjiData = fileRead(chrome.extension.getURL("data/kanji.dat"), 'UTF-8');
   dicts.radData = fileReadArray(chrome.extension.getURL("data/radicals.dat"), 'UTF-8');
-
-  if (loadNamesDict) loadNames();
+  dicts.nameDict = fileRead(chrome.extension.getURL("data/names.dat"));
+  dicts.nameIndex = fileRead(chrome.extension.getURL("data/names.idx"));
 
   // Load deinflection data
   {
@@ -215,8 +209,6 @@ rcxDict.prototype = {
 
     if (doNames) {
       // check: split this
-
-      loadNames();
       dict = dicts.nameDict;
       index = dicts.nameIndex;
       maxTrim = 20;//this.config.namax;
@@ -436,7 +428,6 @@ rcxDict.prototype = {
     if (doNames) {
       e.names = 1;
       max = 20;//this.config.namax;
-      loadNames();
       d = dicts.nameDict;
     }
     else {

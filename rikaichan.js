@@ -39,7 +39,6 @@
 
 */
 var rcxMain = {
-  haveNames: true,
   dictCount: 3,
   altView: 0,
   enabled: 0,
@@ -47,7 +46,7 @@ var rcxMain = {
   loadDictionary: function() {
     if (!this.dict) {
       try {
-        this.dict = new rcxDict(this.haveNames/* && !this.cfg.nadelay*/);
+        this.dict = new rcxDict();
         //this.dict.setConfig(this.dconfig);
       }
       catch (ex) {
