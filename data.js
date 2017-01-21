@@ -111,12 +111,6 @@ function rcxDict() {
 }
 
 rcxDict.prototype = {
-  config: {},
-
-  setConfig: function(c) {
-    this.config = c;
-  },
-
   find: function(data, text) {
     const tlen = text.length;
     var beg = 0;
@@ -211,14 +205,14 @@ rcxDict.prototype = {
       // check: split this
       dict = dicts.nameDict;
       index = dicts.nameIndex;
-      maxTrim = 20;//this.config.namax;
+      maxTrim = 20;
       entry.names = 1;
       console.log('doNames');
     }
     else {
       dict = dicts.wordDict;
       index = dicts.wordIndex;
-      maxTrim = 7;//this.config.wmax;
+      maxTrim = 7;
     }
 
     if (max != null) maxTrim = max;
@@ -372,7 +366,7 @@ rcxDict.prototype = {
     while (text.length > 0) {
       e = this.wordSearch(text, false, 1);
       if (e != null) {
-        if (o.data.length >= 7/* this.config.wmax */) {
+        if (o.data.length >= 7) {
           o.more = 1;
           break;
         }
@@ -427,12 +421,12 @@ rcxDict.prototype = {
 
     if (doNames) {
       e.names = 1;
-      max = 20;//this.config.namax;
+      max = 20;
       d = dicts.nameDict;
     }
     else {
       e.names = 0;
-      max = 7;//this.config.wmax;
+      max = 7;
       d = dicts.wordDict;
     }
 
@@ -683,8 +677,6 @@ rcxDict.prototype = {
 
         s = e[3];
         t = s.replace(/\//g, '; ');
-        if (/* !this.config.wpos */false) t = t.replace(/^\([^)]+\)\s*/, '');
-        if (/* !this.config.wpop */false) t = t.replace('; (P)', '');
         if (rcxMain.config.onlyreading == 'false') {
           t = '<br/><span class="w-def">' + t + '</span><br/>';
         }
@@ -698,7 +690,6 @@ rcxDict.prototype = {
 
     return b.join('');
   },
-
 
   makeHtmlForRuby: function(entry) {
     var e;
@@ -722,8 +713,6 @@ rcxDict.prototype = {
 
       s = e[3];
       t = s.replace(/\//g, '; ');
-      if (/* !this.config.wpos */false) t = t.replace(/^\([^)]+\)\s*/, '');
-      if (/* !this.config.wpop */false) t = t.replace('; (P)', '');
       t = '<span class="w-def">' + t + '</span><br/>\n';
     }
     b.push(t);
@@ -755,10 +744,8 @@ rcxDict.prototype = {
 
       for (i = 0; i < this.numList.length; i += 2) {
         e = this.numList[i];
-        if (/* this.config.kdisp[e] */1 == 1) {
-          j = entry.misc[e];
-          b.push(this.numList[i + 1].replace('&amp;', '&') + '\t' + (j ? j : '-') + '\n');
-        }
+        j = entry.misc[e];
+        b.push(this.numList[i + 1].replace('&amp;', '&') + '\t' + (j ? j : '-') + '\n');
       }
     }
     else {
@@ -775,8 +762,6 @@ rcxDict.prototype = {
         }
 
         t = e[3].replace(/\//g, '; ');
-        if (false/* !this.config.wpos */) t = t.replace(/^\([^)]+\)\s*/, '');
-        if (false/* !this.config.wpop */) t = t.replace('; (P)', '');
         b.push('\t' + t + '\n');
       }
     }
