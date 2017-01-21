@@ -38,8 +38,10 @@
   when modifying any of the files. - Jon
 
 */
+
+var dictCount = 3;
+
 var rcxMain = {
-  dictCount: 3,
   altView: 0,
   enabled: 0,
 
@@ -61,7 +63,7 @@ var rcxMain = {
   _onTabSelect: function(tabId) {
 
     if ((this.enabled == 1))
-      chrome.tabs.sendMessage(tabId, {"type":"enable", "config":rcxMain.config});
+      chrome.tabs.sendMessage(tabId, {type: "enable", config: rcxMain.config});
   },
 
   savePrep: function(clip, entry) {
@@ -167,7 +169,7 @@ var rcxMain = {
 
     // Send a disable message to all browsers
     var windows = chrome.windows.getAll(
-      {"populate": true}, 
+      {populate: true}, 
       function(windows) {
         for (var i =0; i < windows.length; ++i) {
           var tabs = windows[i].tabs;
@@ -190,7 +192,7 @@ var rcxMain = {
   showMode: 0,
 
   nextDict: function() {
-    this.showMode = (this.showMode + 1) % this.dictCount;
+    this.showMode = (this.showMode + 1) % dictCount;
   },
 
   resetDict: function() {
@@ -213,7 +215,7 @@ var rcxMain = {
         this.showMode = 0;
         break;
       case this.nextDict:
-        this.showMode = (this.showMode + 1) % this.dictCount;
+        this.showMode = (this.showMode + 1) % dictCount;
         break;
     }
     
@@ -233,7 +235,7 @@ var rcxMain = {
           break;
       }
       if (e) break;
-      this.showMode = (this.showMode + 1) % this.dictCount;
+      this.showMode = (this.showMode + 1) % dictCount;
     } while (this.showMode != m);
     
     return e;
