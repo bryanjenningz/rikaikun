@@ -43,6 +43,11 @@ var consts = {
   dictCount: 3,
   kanjiN: 1,
   namesN: 2,
+
+  sameDict: '0',
+  forceKanji: '1',
+  defaultDict: '2',
+  nextDict: '3',
 };
 
 var vars = {
@@ -57,9 +62,7 @@ var rcxMain = {
     if (!this.dict) {
       try {
         this.dict = new rcxDict();
-        //this.dict.setConfig(this.dconfig);
-      }
-      catch (ex) {
+      } catch (ex) {
         alert('Error loading dictionary: ' + ex);
         return false;
       }
@@ -70,7 +73,7 @@ var rcxMain = {
   onTabSelect: function(tabId) { rcxMain._onTabSelect(tabId); },
   _onTabSelect: function(tabId) {
 
-    if ((this.enabled == 1))
+    if (this.enabled === 1)
       chrome.tabs.sendMessage(tabId, {type: "enable", config: rcxMain.config});
   },
 
@@ -82,7 +85,7 @@ var rcxMain = {
     var e;
 
     f = entry;
-    if ((!f) || (f.length == 0)) return null;
+    if (!f || f.length === 0) return null;
 
     if (clip) { // save to clipboard
       me = rcxMain.config.maxClipCopyEntries;
@@ -156,7 +159,7 @@ var rcxMain = {
     chrome.tabs.sendMessage(tab.id, {"type": "enable", "config": rcxMain.config});
     this.enabled = 1;
     
-    if (mode == 1) {
+    if (mode === 1) {
       if (rcxMain.config.minihelp == 'true')
         chrome.tabs.sendMessage(tab.id, {"type": "showPopup", "text": rcxMain.miniHelp});
       else
@@ -197,23 +200,17 @@ var rcxMain = {
   resetDict: function() {
     vars.showMode = 0;
   },
-  
-  sameDict: '0',
-  forceKanji: '1',
-  defaultDict: '2',
-  nextDict: '3',
 
   search: function(text, dictOption) {
-
     switch (dictOption) {
-      case this.forceKanji:
+      case consts.forceKanji:
         var e = this.dict.kanjiSearch(text.charAt(0));
         return e;
         break;
-      case this.defaultDict:
+      case consts.defaultDict:
         vars.showMode = 0;
         break;
-      case this.nextDict:
+      case consts.nextDict:
         vars.showMode = (vars.showMode + 1) % consts.dictCount;
         break;
     }
