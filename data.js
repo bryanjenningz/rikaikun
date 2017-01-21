@@ -84,7 +84,6 @@ function rcxDict(loadNamesDict) {
 
 	// Load deinflection data
 	{
-		console.log('loading deinflection data');
 		difs.difReasons = [];
 		difs.difRules = [];
 
@@ -143,146 +142,6 @@ rcxDict.prototype = {
 		}
 		return null;
 	},
-
-/*
-	test_kanji: function() {
-		var a = dicts.kanjiData.split('\n');
-
-		alert('begin test. a.length=' + a.length);
-		var start = (new Date()).getTime();
-		for (var i = 0; i < a.length; ++i) {
-			if (!this.kanjiSearch(a[i].charAt(0))) {
-				alert('error @' + i + ': ' + a[i]);
-				return;
-			}
-		}
-		alert('time = ' + ((new Date()).getTime() - start));
-	},
-*/
-
-/*
-	test_index: function() {
-		var ixF = fileRead('chrome://rikaichan/content/dict.idx', 'EUC-JP');
-		var ixA = ixF.split('\n');
-
-		while ((ixA.length > 0) && (ixA[ixA.length - 1].length == 0)) ixA.pop();
-
-//		alert('length=' + ixA.length + ' / ' + ixF.length);
-if (0) {
-		var timeA = (new Date()).getTime();
-		for (var i = ixA.length - 1; i >= 0; --i) {
-			if ((i & 0xFF) == 0) window.status = 'A: ' + i;
-			var s = ixA[i];
-			var r = this.binSearchX(ixA, s.substr(0, s.indexOf(',') + 1));
-			if ((r == -1) || (ixA[r] != s)) {
-				alert('A failed: ' + s);
-				return;
-			}
-		}
-}
-		timeA = ((new Date()).getTime() - timeA) / 1000;
-
-
-		var timeF = (new Date()).getTime();
-		for (var i = ixA.length - 1; i >= 0; --i) {
-			if ((i & 0xFF) == 0) window.status = 'F: ' + i;
-			var s = ixA[i];
-			var r = this.find(ixF, s.substr(0, s.indexOf(',') + 1));
-			if (r != s) {
-				alert('F failed: ' + s);
-				return;
-			}
-		}
-		timeF = ((new Date()).getTime() - timeF) / 1000;
-
-		var timeX = (new Date()).getTime();
-if (0) {
-		for (var i = ixA.length - 1; i >= 0; --i) {
-			if ((i & 0xFF) == 0) window.status = 'X: ' + i;
-			var s = ixA[i];
-
-			var w = s.substr(0, s.indexOf(',') + 1);
-			var j = 0;
-			r = '';
-			if (ixF.substr(0, w.length) == w) {
-				r = ixF.substr(0, ixF.indexOf('\n'));
-			}
-			else {
-				w = '\n' + w;
-				j = ixF.indexOf(w);
-				if (j != -1) r = ixF.substring(j + 1, ixF.indexOf('\n', j + 1));
-			}
-
-			if (r != s) {
-				alert('X failed:\n[' + s + ']\n[' + r + ']');
-				return;
-			}
-		}
-}
-		timeX = ((new Date()).getTime() - timeX) / 1000;
-
-		alert('A=' + timeA + ' / F=' + timeF + ' / X=' + timeX);
-	},
-
-*/
-
-	deinflect: function(word) {
-		var r = [];
-		var have = [];
-		var o;
-
-		o = {};
-		o.word = word;
-		o.type = 0xFF;
-		o.reason = '';
-		//o.debug = 'root';
-		r.push(o);
-		have[word] = 0;
-
-		var i, j, k;
-
-		i = 0;
-		do {
-			word = r[i].word;
-			var wordLen = word.length;
-			var type = r[i].type;
-
-			for (j = 0; j < difs.difRules.length; ++j) {
-				var g = difs.difRules[j];
-				if (g.flen <= wordLen) {
-					var end = word.substr(-g.flen);
-					for (k = 0; k < g.length; ++k) {
-						var rule = g[k];
-						if ((type & rule.type) && (end == rule.from)) {
-							var newWord = word.substr(0, word.length - rule.from.length) + rule.to;
-							if (newWord.length <= 1) continue;
-							o = {};
-							if (have[newWord] != undefined) {
-								o = r[have[newWord]];
-								o.type |= (rule.type >> 8);
-
-								//o.reason += ' / ' + r[i].reason + ' ' + difs.difReasons[rule.reason];
-								//o.debug += ' @ ' + rule.debug;
-								continue;
-							}
-							have[newWord] = r.length;
-							if (r[i].reason.length) o.reason = difs.difReasons[rule.reason] + ' &lt; ' + r[i].reason;
-								else o.reason = difs.difReasons[rule.reason];
-							o.type = rule.type >> 8;
-							o.word = newWord;
-							//o.debug = r[i].debug + ' $ ' + rule.debug;
-							r.push(o);
-						}
-					}
-				}
-			}
-
-		} while (++i < r.length);
-
-		return r;
-	},
-
-
 
 	// katakana -> hiragana conversion tables
 	// を,ぁ,ぃ,ぅ,ぇ,ぉ,ゃ,ゅ,ょ,っ,ー,あ,い,う,え,お,か,き,く,け,こ,さ,し,す,せ,そ,た,ち,つ,て,と,な,に,ぬ,ね,の,は,ひ,ふ,へ,ほ,ま,み,む,め,も,や,ゆ,よ,ら,り,る,れ,ろ,わ,ん
@@ -376,15 +235,15 @@ if (0) {
 
 		entry.data = [];
 
-        while (word.length > 0) {
+    while (word.length > 0) {
 			var showInf = (count != 0);
 			var trys;
 
 			if (doNames) trys = [{'word': word, 'type': 0xFF, 'reason': null}];
-				else trys = this.deinflect(word);
+			else trys = deinflect(word);
 
-            for (i = 0; i < trys.length; i++) {
-                u = trys[i];
+      for (i = 0; i < trys.length; i++) {
+        u = trys[i];
 
 				var ix = cache[u.word];
 				if (!ix) {
@@ -397,8 +256,8 @@ if (0) {
 					cache[u.word] = ix;
 				}
 
-                for (var j = 1; j < ix.length; ++j) {
-                    var ofs = ix[j];
+        for (var j = 1; j < ix.length; ++j) {
+          var ofs = ix[j];
 					if (have[ofs]) continue;
 
 					var dentry = dict.substring(ofs, dict.indexOf('\n', ofs));
@@ -429,38 +288,88 @@ if (0) {
 						}
 						ok = (z != -1);
 					}
-                    if (ok) {
-                        if (count >= maxTrim) {
+          if (ok) {
+            if (count >= maxTrim) {
 							entry.more = 1;
 							break;
 						}
 
 						have[ofs] = 1;
-                        ++count;
-                        if (maxLen == 0) maxLen = trueLen[word.length];
+            ++count;
+            if (maxLen == 0) maxLen = trueLen[word.length];
 
 						if (trys[i].reason) {
 							if (showInf) r = '&lt; ' + trys[i].reason + ' &lt; ' + word;
-								else r = '&lt; ' + trys[i].reason;
-						}
-						else {
+							else r = '&lt; ' + trys[i].reason;
+						} else {
 							r = null;
 						}
 
 						entry.data.push([dentry, r]);
-                    }
-                }	// for j < ix.length
+          }
+        }	// for j < ix.length
 				if (count >= maxTrim) break;
-            }	// for i < trys.length
-            if (count >= maxTrim) break;
-            word = word.substr(0, word.length - 1);
-        }	// while word.length > 0
+      }	// for i < trys.length
+      if (count >= maxTrim) break;
+      word = word.substr(0, word.length - 1);
+    }	// while word.length > 0
 
 		if (entry.data.length == 0) return null;
 
 		entry.matchLen = maxLen;
-        return entry;
-    },
+    return entry;
+
+	  function deinflect(word) {
+			var r = [];
+			var have = [];
+			var o;
+
+			o = {};
+			o.word = word;
+			o.type = 0xFF;
+			o.reason = '';
+			//o.debug = 'root';
+			r.push(o);
+			have[word] = 0;
+
+			var i, j, k;
+
+			i = 0;
+			do {
+				word = r[i].word;
+				var wordLen = word.length;
+				var type = r[i].type;
+
+				for (j = 0; j < difs.difRules.length; ++j) {
+					var g = difs.difRules[j];
+					if (g.flen <= wordLen) {
+						var end = word.substr(-g.flen);
+						for (k = 0; k < g.length; ++k) {
+							var rule = g[k];
+							if ((type & rule.type) && (end == rule.from)) {
+								var newWord = word.substr(0, word.length - rule.from.length) + rule.to;
+								if (newWord.length <= 1) continue;
+								o = {};
+								if (have[newWord] != undefined) {
+									o = r[have[newWord]];
+									o.type |= (rule.type >> 8);
+									continue;
+								}
+								have[newWord] = r.length;
+								if (r[i].reason.length) o.reason = difs.difReasons[rule.reason] + ' &lt; ' + r[i].reason;
+								else o.reason = difs.difReasons[rule.reason];
+								o.type = rule.type >> 8;
+								o.word = newWord;
+								r.push(o);
+							}
+						}
+					}
+				}
+			} while (++i < r.length);
+
+			return r;
+		}
+  },
 
 	translate: function(text) {
 		var e, o;
