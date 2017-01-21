@@ -352,8 +352,6 @@ var rcxContent = {
 		switch (ev.keyCode) {
 		case 16:	// shift
 		case 13:	// enter
-			//this.showMode = (this.showMode + 1) % this.dictCount;
-			//chrome.extension.sendMessage({"type":"nextDict"});
 			this.show(ev.currentTarget.rikaichan, this.nextDict);
 			break;
 		case 27:	// esc
@@ -371,8 +369,6 @@ var rcxContent = {
 			var ofs = ev.currentTarget.rikaichan.uofs;
 			for (i = 50; i > 0; --i) {
 				ev.currentTarget.rikaichan.uofs = --ofs;
-				//chrome.extension.sendMessage({"type":"resetDict"});
-				//this.showMode = 0;
 				if (this.show(ev.currentTarget.rikaichan, this.defaultDict) >= 0) {
 					if (ofs >= ev.currentTarget.rikaichan.uofs) break;	// ! change later
 				}
@@ -387,8 +383,6 @@ var rcxContent = {
 		case 78:	// n
 			for (i = 50; i > 0; --i) {
 				ev.currentTarget.rikaichan.uofs += ev.currentTarget.rikaichan.uofsNext;
-				//chrome.extension.sendMessage({"type":"resetDict"});
-				//this.showMode = 0;
 				if (this.show(ev.currentTarget.rikaichan, this.defaultDict) >= 0) break;
 			}
 			break;

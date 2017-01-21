@@ -39,7 +39,15 @@
 
 */
 
-var dictCount = 3;
+var consts = {
+  dictCount: 3,
+  kanjiN: 1,
+  namesN: 2,
+};
+
+var vars = {
+  showMode: 0,
+};
 
 var rcxMain = {
   altView: 0,
@@ -186,17 +194,8 @@ var rcxMain = {
     else rcxMain.inlineEnable(tab, 1);
   },
   
-  kanjiN: 1,
-  namesN: 2,
-
-  showMode: 0,
-
-  nextDict: function() {
-    this.showMode = (this.showMode + 1) % dictCount;
-  },
-
   resetDict: function() {
-    this.showMode = 0;
+    vars.showMode = 0;
   },
   
   sameDict: '0',
@@ -212,31 +211,31 @@ var rcxMain = {
         return e;
         break;
       case this.defaultDict:
-        this.showMode = 0;
+        vars.showMode = 0;
         break;
       case this.nextDict:
-        this.showMode = (this.showMode + 1) % dictCount;
+        vars.showMode = (vars.showMode + 1) % consts.dictCount;
         break;
     }
     
-    var m = this.showMode;
+    var initialShowMode = vars.showMode;
     var e = null;
 
     do {
-      switch (this.showMode) {
+      switch (vars.showMode) {
         case 0:
           e = this.dict.wordSearch(text, false);
           break;
-        case this.kanjiN:
+        case consts.kanjiN:
           e = this.dict.kanjiSearch(text.charAt(0));
           break;
-        case this.namesN:
+        case consts.namesN:
           e = this.dict.wordSearch(text, true);
           break;
       }
       if (e) break;
-      this.showMode = (this.showMode + 1) % dictCount;
-    } while (this.showMode != m);
+      vars.showMode = (vars.showMode + 1) % consts.dictCount;
+    } while (vars.showMode != initialShowMode);
     
     return e;
   }
