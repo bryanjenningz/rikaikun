@@ -125,8 +125,8 @@ rcxDict.prototype = {
 
       mis = data.substr(i, tlen);
       if (text < mis) end = i - 1;
-        else if (text > mis) beg = data.indexOf('\n', mi + 1) + 1;
-          else return data.substring(i, data.indexOf('\n', mi + 1));
+      else if (text > mis) beg = data.indexOf('\n', mi + 1) + 1;
+      else return data.substring(i, data.indexOf('\n', mi + 1));
     }
     return null;
   },
@@ -159,23 +159,23 @@ rcxDict.prototype = {
       if (u <= 0x3000) break;
 
       // full-width katakana to hiragana
-      if ((u >= 0x30A1) && (u <= 0x30F3)) {
+      if (u >= 0x30A1 && u <= 0x30F3) {
         u -= 0x60;
       }
       // half-width katakana to hiragana
-      else if ((u >= 0xFF66) && (u <= 0xFF9D)) {
+      else if (u >= 0xFF66 && u <= 0xFF9D) {
         u = ch[u - 0xFF66];
       }
       // voiced (used in half-width katakana) to hiragana
-      else if (u == 0xFF9E) {
-        if ((p >= 0xFF73) && (p <= 0xFF8E)) {
+      else if (u == 0xFF9E) { // if current char is "ﾞ"
+        if (p >= 0xFF73 && p <= 0xFF8E) {
           r = r.substr(0, r.length - 1);
           u = cv[p - 0xFF73];
         }
       }
       // semi-voiced (used in half-width katakana) to hiragana
-      else if (u == 0xFF9F) {
-        if ((p >= 0xFF8A) && (p <= 0xFF8E)) {
+      else if (u == 0xFF9F) { // if current char is "ﾟ"
+        if (p >= 0xFF8A && p <= 0xFF8E) {
           r = r.substr(0, r.length - 1);
           u = cs[p - 0xFF8A];
         }
@@ -312,7 +312,6 @@ rcxDict.prototype = {
       o.word = word;
       o.type = 0xFF;
       o.reason = '';
-      //o.debug = 'root';
       r.push(o);
       have[word] = 0;
 
