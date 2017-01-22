@@ -134,64 +134,64 @@ rcxDict.prototype = {
   wordSearch: function(word, doNames, max) {
     // katakana -> hiragana conversion tables
     // を,ぁ,ぃ,ぅ,ぇ,ぉ,ゃ,ゅ,ょ,っ,ー,あ,い,う,え,お,か,き,く,け,こ,さ,し,す,せ,そ,た,ち,つ,て,と,な,に,ぬ,ね,の,は,ひ,ふ,へ,ほ,ま,み,む,め,も,や,ゆ,よ,ら,り,る,れ,ろ,わ,ん
-    var ch = [0x3092,0x3041,0x3043,0x3045,0x3047,0x3049,0x3083,0x3085,0x3087,0x3063,0x30FC,0x3042,0x3044,0x3046,
+    const ch = [0x3092,0x3041,0x3043,0x3045,0x3047,0x3049,0x3083,0x3085,0x3087,0x3063,0x30FC,0x3042,0x3044,0x3046,
       0x3048,0x304A,0x304B,0x304D,0x304F,0x3051,0x3053,0x3055,0x3057,0x3059,0x305B,0x305D,0x305F,0x3061,
       0x3064,0x3066,0x3068,0x306A,0x306B,0x306C,0x306D,0x306E,0x306F,0x3072,0x3075,0x3078,0x307B,0x307E,
       0x307F,0x3080,0x3081,0x3082,0x3084,0x3086,0x3088,0x3089,0x308A,0x308B,0x308C,0x308D,0x308F,0x3093];
     // ヴ,ｴ,ｵ,が,ぎ,ぐ,げ,ご,ざ,じ,ず,ぜ,ぞ,だ,ぢ,づ,で,ど,ﾅ,ﾆ,ﾇ,ﾈ,ﾉ,ば,び,ぶ,べ,ぼ
-    var cv = [0x30F4,0xFF74,0xFF75,0x304C,0x304E,0x3050,0x3052,0x3054,0x3056,0x3058,0x305A,0x305C,0x305E,0x3060,
+    const cv = [0x30F4,0xFF74,0xFF75,0x304C,0x304E,0x3050,0x3052,0x3054,0x3056,0x3058,0x305A,0x305C,0x305E,0x3060,
       0x3062,0x3065,0x3067,0x3069,0xFF85,0xFF86,0xFF87,0xFF88,0xFF89,0x3070,0x3073,0x3076,0x3079,0x307C];
     // ぱ,ぴ,ぷ,ぺ,ぽ
-    var cs = [0x3071,0x3074,0x3077,0x307A,0x307D];
+    const cs = [0x3071,0x3074,0x3077,0x307A,0x307D];
 
-    var i, u, v, r, p;
-    var trueLen = [0];
-    var entry = { };
+    let trueLen = [0];
+    let entry = {};
 
     // half & full-width katakana to hiragana conversion
     // note: katakana vu is never converted to hiragana
+    {
+      let p = 0;
+      let r = '';
+      for (let i = 0; i < word.length; ++i) {
+        let u = word.charCodeAt(i);
+        const v = word.charCodeAt(i);
 
-    p = 0;
-    r = '';
-    for (i = 0; i < word.length; ++i) {
-      u = v = word.charCodeAt(i);
+        if (u <= 0x3000) break;
 
-      if (u <= 0x3000) break;
-
-      // full-width katakana to hiragana
-      if (u >= 0x30A1 && u <= 0x30F3) {
-        u -= 0x60;
-      }
-      // half-width katakana to hiragana
-      else if (u >= 0xFF66 && u <= 0xFF9D) {
-        u = ch[u - 0xFF66];
-      }
-      // voiced (used in half-width katakana) to hiragana
-      else if (u == 0xFF9E) { // if current char is "ﾞ"
-        if (p >= 0xFF73 && p <= 0xFF8E) {
-          r = r.substr(0, r.length - 1);
-          u = cv[p - 0xFF73];
+        // full-width katakana to hiragana
+        if (u >= 0x30A1 && u <= 0x30F3) {
+          u -= 0x60;
         }
-      }
-      // semi-voiced (used in half-width katakana) to hiragana
-      else if (u == 0xFF9F) { // if current char is "ﾟ"
-        if (p >= 0xFF8A && p <= 0xFF8E) {
-          r = r.substr(0, r.length - 1);
-          u = cs[p - 0xFF8A];
+        // half-width katakana to hiragana
+        else if (u >= 0xFF66 && u <= 0xFF9D) {
+          u = ch[u - 0xFF66];
         }
-      }
-      // ignore J~
-      else if (u == 0xFF5E) {
-        p = 0;
-        continue;
-      }
+        // voiced (used in half-width katakana) to hiragana
+        else if (u == 0xFF9E) { // if current char is "ﾞ"
+          if (p >= 0xFF73 && p <= 0xFF8E) {
+            r = r.substr(0, r.length - 1);
+            u = cv[p - 0xFF73];
+          }
+        }
+        // semi-voiced (used in half-width katakana) to hiragana
+        else if (u == 0xFF9F) { // if current char is "ﾟ"
+          if (p >= 0xFF8A && p <= 0xFF8E) {
+            r = r.substr(0, r.length - 1);
+            u = cs[p - 0xFF8A];
+          }
+        }
+        // ignore J~
+        else if (u == 0xFF5E) {
+          p = 0;
+          continue;
+        }
 
-      r += String.fromCharCode(u);
-      trueLen[r.length] = i + 1;  // need to keep real length because of the half-width semi/voiced conversion
-      p = v;
+        r += String.fromCharCode(u);
+        trueLen[r.length] = i + 1;  // need to keep real length because of the half-width semi/voiced conversion
+        p = v;
+      }
+      word = r;
     }
-    word = r;
-
 
     var dict;
     var index;
@@ -226,8 +226,8 @@ rcxDict.prototype = {
       if (doNames) trys = [{'word': word, 'type': 0xFF, 'reason': null}];
       else trys = deinflect(word);
 
-      for (i = 0; i < trys.length; i++) {
-        u = trys[i];
+      for (let i = 0; i < trys.length; i++) {
+        const u = trys[i];
 
         var ix = cache[u.word];
         if (!ix) {
@@ -282,6 +282,7 @@ rcxDict.prototype = {
             ++count;
             if (maxLen == 0) maxLen = trueLen[word.length];
 
+            let r;
             if (trys[i].reason) {
               if (showInf) r = '&lt; ' + trys[i].reason + ' &lt; ' + word;
               else r = '&lt; ' + trys[i].reason;
